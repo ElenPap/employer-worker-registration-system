@@ -11,12 +11,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.swing.JOptionPane;
-
 import com.cbozan.entity.Employer;
 import com.cbozan.entity.Invoice;
 import com.cbozan.entity.Invoice.InvoiceBuilder;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.ExceptionUtil;
 
 public class InvoiceDAO {
 
@@ -76,7 +75,7 @@ public class InvoiceDAO {
 						invoiceList.add(invoice);
 						cache.put(invoice.getId(), invoice);
 					} catch (EntityException e) {
-						showEntityException(e, "İŞVEREN ÖDEME EKLEME HATASI");
+						ExceptionUtil.showEntityException(e, "İŞVEREN ÖDEME EKLEME HATASI");
 					}
 					
 				}
@@ -84,7 +83,7 @@ public class InvoiceDAO {
 			}
 			
 		} catch(SQLException sqle) {
-			showSQLException(sqle);
+			ExceptionUtil.showSQLException(sqle);
 		}
 		
 		return invoiceList;
@@ -131,13 +130,13 @@ public class InvoiceDAO {
 					list.add(invoice);
 					cache.put(invoice.getId(), invoice);
 				} catch (EntityException e) {
-					showEntityException(e, "ID : " + rs.getInt("id"));
+					ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id"));
 				}
 				
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return list;
@@ -232,7 +231,7 @@ public class InvoiceDAO {
 						Invoice inv = builder.build();
 						cache.put(inv.getId(), inv);
 					} catch (EntityException e) {
-						showEntityException(e, "ID : " + rs.getInt("id"));
+						ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id"));
 					}
 					
 				}
@@ -240,7 +239,7 @@ public class InvoiceDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -269,7 +268,7 @@ public class InvoiceDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -318,16 +317,5 @@ public class InvoiceDAO {
 	
 	public static InvoiceDAO getInstance() {
 		return InvoiceDAOHelper.instance;
-	}
-	
-	private void showEntityException(EntityException e, String msg) {
-		String message = msg + " not added" + 
-				"\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + e.getCause();
-			JOptionPane.showMessageDialog(null, message);
-	}
-	
-	private void showSQLException(SQLException e) {
-		String message = e.getErrorCode() + "\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + "\n" + e.getCause();
-		JOptionPane.showMessageDialog(null, message);
 	}
 }

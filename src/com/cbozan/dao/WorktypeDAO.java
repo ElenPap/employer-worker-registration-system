@@ -10,11 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.swing.JOptionPane;
-
 import com.cbozan.entity.Worktype;
 import com.cbozan.entity.Worktype.WorktypeBuilder;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.ExceptionUtil;
 
 public class WorktypeDAO {
 	
@@ -76,14 +75,14 @@ public class WorktypeDAO {
 					list.add(worktype);
 					cache.put(worktype.getId(), worktype);
 				} catch (EntityException e) {
-					showEntityException(e, "ID : " + rs.getInt("id") + ", Title : " + rs.getString("title"));
+					ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id") + ", Title : " + rs.getString("title"));
 				}
 				
 			}
 			
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return list;
@@ -126,14 +125,14 @@ public class WorktypeDAO {
 						Worktype wt = builder.build();
 						cache.put(wt.getId(), wt);
 					} catch (EntityException e) {
-						showEntityException(e, "ID : " + rs.getInt("id") + ", Title : " + rs.getString("title"));
+						ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id") + ", Title : " + rs.getString("title"));
 					}
 				}
 				
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -174,7 +173,7 @@ public class WorktypeDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -209,7 +208,7 @@ public class WorktypeDAO {
 			}
 
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -232,16 +231,4 @@ public class WorktypeDAO {
 	public void setUsingCache(boolean usingCache) {
 		this.usingCache = usingCache;
 	}
-	
-	private void showEntityException(EntityException e, String msg) {
-		String message = msg + " not added" + 
-				"\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + e.getCause();
-			JOptionPane.showMessageDialog(null, message);
-	}
-	
-	private void showSQLException(SQLException e) {
-		String message = e.getErrorCode() + "\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + "\n" + e.getCause();
-		JOptionPane.showMessageDialog(null, message);
-	}
-
 }

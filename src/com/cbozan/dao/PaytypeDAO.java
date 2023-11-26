@@ -10,11 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.swing.JOptionPane;
-
 import com.cbozan.entity.Paytype;
 import com.cbozan.entity.Paytype.PaytypeBuilder;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.ExceptionUtil;
 
 public class PaytypeDAO {
 	
@@ -75,13 +74,13 @@ public class PaytypeDAO {
 					list.add(paytype);
 					cache.put(paytype.getId(), paytype);
 				} catch (EntityException e) {
-					showEntityException(e, "ID : " + rs.getInt("id") + " Title : " + rs.getString("title"));
+					ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id") + " Title : " + rs.getString("title"));
 				}
 				
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return list;
@@ -120,7 +119,7 @@ public class PaytypeDAO {
 						Paytype pt = builder.build();
 						cache.put(pt.getId(), pt);
 					} catch (EntityException e) {
-						showEntityException(e, "ID : " + rs.getInt("id") + " Title : " + rs.getString("title"));
+						ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id") + " Title : " + rs.getString("title"));
 					}
 					
 				}
@@ -128,7 +127,7 @@ public class PaytypeDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -167,7 +166,7 @@ public class PaytypeDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -204,7 +203,7 @@ public class PaytypeDAO {
 			}
 
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -226,16 +225,5 @@ public class PaytypeDAO {
 
 	public void setUsingCache(boolean usingCache) {
 		this.usingCache = usingCache;
-	}
-	
-	private void showEntityException(EntityException e, String msg) {
-		String message = msg + " not added" + 
-				"\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + e.getCause();
-			JOptionPane.showMessageDialog(null, message);
-	}
-	
-	private void showSQLException(SQLException e) {
-		String message = e.getErrorCode() + "\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + "\n" + e.getCause();
-		JOptionPane.showMessageDialog(null, message);
 	}
 }

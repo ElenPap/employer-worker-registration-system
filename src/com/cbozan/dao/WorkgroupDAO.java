@@ -10,12 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.swing.JOptionPane;
-
 import com.cbozan.entity.Job;
 import com.cbozan.entity.Workgroup;
 import com.cbozan.entity.Workgroup.WorkgroupBuilder;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.ExceptionUtil;
 
 public class WorkgroupDAO {
 
@@ -154,7 +153,7 @@ public class WorkgroupDAO {
 						workgroupList.add(workgroup);
 						cache.put(workgroup.getId(), workgroup);
 					} catch (EntityException e) {
-						showEntityException(e, "İş grubu eklenemedi.");
+						ExceptionUtil.showEntityException(e, "İş grubu eklenemedi.");
 					}
 					
 					
@@ -163,7 +162,7 @@ public class WorkgroupDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return workgroupList;
@@ -212,13 +211,13 @@ public class WorkgroupDAO {
 					list.add(workgroup);
 					cache.put(workgroup.getId(), workgroup);
 				} catch (EntityException e) {
-					showEntityException(e, "ID : " + rs.getInt("id"));
+					ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id"));
 				}
 				
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return list;
@@ -260,7 +259,7 @@ public class WorkgroupDAO {
 						Workgroup wg = builder.build();
 						cache.put(wg.getId(), wg);
 					} catch (EntityException e) {
-						showEntityException(e, "ID : " + rs.getInt("id"));
+						ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id"));
 					}
 					
 				}
@@ -268,7 +267,7 @@ public class WorkgroupDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -299,7 +298,7 @@ public class WorkgroupDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -326,7 +325,7 @@ public class WorkgroupDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -349,16 +348,4 @@ public class WorkgroupDAO {
 	public void setUsingCache(boolean usingCache) {
 		this.usingCache = usingCache;
 	}
-	
-	private void showEntityException(EntityException e, String msg) {
-		String message = msg + " not added" + 
-				"\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + e.getCause();
-			JOptionPane.showMessageDialog(null, message);
-	}
-	
-	private void showSQLException(SQLException e) {
-		String message = e.getErrorCode() + "\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + "\n" + e.getCause();
-		JOptionPane.showMessageDialog(null, message);
-	}
-	
 }

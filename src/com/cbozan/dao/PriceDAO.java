@@ -10,11 +10,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.swing.JOptionPane;
-
 import com.cbozan.entity.Price;
 import com.cbozan.entity.Price.PriceBuilder;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.ExceptionUtil;
 
 public class PriceDAO {
 
@@ -77,13 +76,13 @@ public class PriceDAO {
 					list.add(price);
 					cache.put(price.getId(), price);
 				} catch (EntityException e) {
-					showEntityException(e, "ID : " + rs.getInt("id"));
+					ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id"));
 				}
 				
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return list;
@@ -128,7 +127,7 @@ public class PriceDAO {
 						Price prc = builder.build();
 						cache.put(prc.getId(), prc);
 					} catch (EntityException e) {
-						showEntityException(e, "ID : " + rs.getInt("id"));
+						ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id"));
 					}
 					
 				}
@@ -136,7 +135,7 @@ public class PriceDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -183,7 +182,7 @@ public class PriceDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -223,7 +222,7 @@ public class PriceDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -245,17 +244,6 @@ public class PriceDAO {
 
 	public void setUsingCache(boolean usingCache) {
 		this.usingCache = usingCache;
-	}
-	
-	private void showEntityException(EntityException e, String msg) {
-		String message = msg + " not added" + 
-				"\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + e.getCause();
-			JOptionPane.showMessageDialog(null, message);
-	}
-	
-	private void showSQLException(SQLException e) {
-		String message = e.getErrorCode() + "\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + "\n" + e.getCause();
-		JOptionPane.showMessageDialog(null, message);
 	}
 	
 }

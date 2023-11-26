@@ -14,12 +14,11 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.Map.Entry;
 
-import javax.swing.JOptionPane;
-
 import com.cbozan.entity.Payment;
 import com.cbozan.entity.Worker;
 import com.cbozan.entity.Payment.PaymentBuilder;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.ExceptionUtil;
 
 public class PaymentDAO {
 	
@@ -89,13 +88,13 @@ public class PaymentDAO {
 					list.add(payment);
 					cache.put(payment.getId(), payment);
 				} catch (EntityException e) {
-					showEntityException(e, "ID : " + rs.getInt("id"));
+					ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id"));
 				}
 				
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return list;
@@ -173,7 +172,7 @@ public class PaymentDAO {
 						paymentList.add(payment);
 						cache.put(payment.getId(), payment);
 					} catch (EntityException e) {
-						showEntityException(e, "işçi ödeme oluşturma hatası.\nTekrar dene");
+						ExceptionUtil.showEntityException(e, "işçi ödeme oluşturma hatası.\nTekrar dene");
 					}
 					
 				}
@@ -181,7 +180,7 @@ public class PaymentDAO {
 			}
 			
 		} catch(SQLException sqle) {
-			showSQLException(sqle);
+			ExceptionUtil.showSQLException(sqle);
 		}
 		
 		return paymentList;
@@ -223,7 +222,7 @@ public class PaymentDAO {
 						paymentList.add(payment);
 						cache.put(payment.getId(), payment);
 					} catch (EntityException e) {
-						showEntityException(e, "işçi ödeme oluşturma hatası.\nTekrar dene");
+						ExceptionUtil.showEntityException(e, "işçi ödeme oluşturma hatası.\nTekrar dene");
 					}
 					
 				}
@@ -231,7 +230,7 @@ public class PaymentDAO {
 			}
 			
 		} catch(SQLException sqle) {
-			showSQLException(sqle);
+			ExceptionUtil.showSQLException(sqle);
 		}
 		
 		return paymentList;
@@ -330,14 +329,14 @@ public class PaymentDAO {
 						Payment py = builder.build();
 						cache.put(py.getId(), py);
 					} catch (EntityException e) {
-						showEntityException(e, "ID : " + rs.getInt("id"));
+						ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id"));
 					}
 				}
 				
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -375,7 +374,7 @@ public class PaymentDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -424,17 +423,6 @@ public class PaymentDAO {
 	
 	public static PaymentDAO getInstance() {
 		return PaymentDAOHelper.instance;
-	}
-	
-	private void showEntityException(EntityException e, String msg) {
-		String message = msg + " not added" + 
-				"\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + e.getCause();
-			JOptionPane.showMessageDialog(null, message);
-	}
-	
-	private void showSQLException(SQLException e) {
-		String message = e.getErrorCode() + "\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + "\n" + e.getCause();
-		JOptionPane.showMessageDialog(null, message);
 	}
 
 }

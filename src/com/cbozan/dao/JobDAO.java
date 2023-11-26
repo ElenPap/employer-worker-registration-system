@@ -10,12 +10,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 
-import javax.swing.JOptionPane;
-
 import com.cbozan.entity.Employer;
 import com.cbozan.entity.Job;
 import com.cbozan.entity.Job.JobBuilder;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.ExceptionUtil;
 
 public class JobDAO {
 	
@@ -76,7 +75,7 @@ public class JobDAO {
 						jobList.add(job);
 						cache.put(job.getId(), job);
 					} catch (EntityException e) {
-						showEntityException(e, "İŞ EKLEME HATASI");
+						ExceptionUtil.showEntityException(e, "İŞ EKLEME HATASI");
 					}
 					
 				}
@@ -84,7 +83,7 @@ public class JobDAO {
 			}
 			
 		} catch(SQLException sqle) {
-			showSQLException(sqle);
+			ExceptionUtil.showSQLException(sqle);
 		}
 		
 		return jobList;
@@ -134,13 +133,13 @@ public class JobDAO {
 					list.add(job);
 					cache.put(job.getId(), job);
 				} catch (EntityException e) {
-					showEntityException(e, "ID : " + rs.getInt("id") + " Title : " + rs.getString("title"));
+					ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id") + " Title : " + rs.getString("title"));
 				}
 				
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return list;
@@ -185,13 +184,13 @@ public class JobDAO {
 						Job obj = builder.build();
 						cache.put(obj.getId(), obj);
 					} catch (EntityException e) {
-						showEntityException(e, "ID : " + rs.getInt("id") + " Title : " + rs.getString("title"));
+						ExceptionUtil.showEntityException(e, "ID : " + rs.getInt("id") + " Title : " + rs.getString("title"));
 					}
 				}
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -236,7 +235,7 @@ public class JobDAO {
 			}
 			
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -273,7 +272,7 @@ public class JobDAO {
 			}
 
 		} catch (SQLException e) {
-			showSQLException(e);
+			ExceptionUtil.showSQLException(e);
 		}
 		
 		return result == 0 ? false : true;
@@ -295,16 +294,5 @@ public class JobDAO {
 	
 	public static JobDAO getInstance() {
 		return JobDAOHelper.instance;
-	}
-	
-	private void showEntityException(EntityException e, String msg) {
-		String message = msg + " not added" + 
-				"\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + e.getCause();
-			JOptionPane.showMessageDialog(null, message);
-	}
-	
-	private void showSQLException(SQLException e) {
-		String message = e.getErrorCode() + "\n" + e.getMessage() + "\n" + e.getLocalizedMessage() + "\n" + e.getCause();
-		JOptionPane.showMessageDialog(null, message);
 	}
 }
