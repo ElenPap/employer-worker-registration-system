@@ -20,6 +20,7 @@ import javax.swing.border.LineBorder;
 import com.cbozan.dao.PriceDAO;
 import com.cbozan.entity.Price;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.LayoutMetrics;
 import com.cbozan.view.component.RecordTextField;
 import com.cbozan.view.helper.Control;
 import com.cbozan.view.helper.Observer;
@@ -30,76 +31,37 @@ public class PricePanel extends JPanel implements Observer, Serializable, Action
 
 	private final List<Observer> observers;
 	
-	/**
-	 * y position of label
-	 */
-	private final int LY = 230;
-	
-	/**
-	 * x position of label
-	 */
-	private final int LX = 450;
-	
-	/**
-	 * width of the Textfield
-	 */
-	private final int TW = 60;
-	
-	/**
-	 * height of the TextField
-	 */
-	private final int TH = 25;
-	
-	/**
-	 * width of the label
-	 */
-	private final int LW = 140;
-	
-	/**
-	 * height of the label
-	 */
-	private final int LH = 25;
-	
-	/**
-	 * vertical space of the label
-	 */
-	private final int LVS = 50;
-	
-	/**
-	 * vertical space between label and textfield
-	 */
-	private final int LTVS = 30;
-	
-	
 	private JLabel imageLabel;
 	private JLabel fulltimeLabel, halftimeLabel, overtimeLabel;
 	private RecordTextField fulltimeTextField, halftimeTextField, overtimeTextField;
 	private JButton saveButton;
 	
 	private Color defaultColor;
+	private final LayoutMetrics layoutMetrics;
 	
 	public PricePanel() {
 		
 		super();
+		layoutMetrics = new LayoutMetrics(230, 450, 60, 25, 140, 25, 50, 30, 0, 0, 0);
 		setLayout(null);
 		
 		observers = new ArrayList<>();
 		subscribe(this);
 		
 		imageLabel = new JLabel(new ImageIcon("src\\icon\\new_price.png"));
-		imageLabel.setBounds(LX + 12, 50, 128, 128);
+		imageLabel.setBounds(layoutMetrics.getLabelPositionX() + 12, 50, 128, 128);
 		this.add(imageLabel);
 		
 		defaultColor = imageLabel.getForeground();
 		
 		fulltimeLabel = new JLabel("Fulltime (TL)");
-		fulltimeLabel.setBounds(LX, LY + LTVS, LW, LH);
+		fulltimeLabel.setBounds(layoutMetrics.getLabelPositionX(), layoutMetrics.getLabelPositionY() + layoutMetrics.getLabelTextFieldVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		fulltimeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		
 		fulltimeTextField = new RecordTextField(RecordTextField.DECIMAL_NUMBER_TEXT + RecordTextField.REQUIRED_TEXT);
 		fulltimeTextField.setHorizontalAlignment(SwingConstants.CENTER);
-		fulltimeTextField.setBounds(LX + (fulltimeLabel.getWidth() / 2) - (TW / 2), LY, TW, TH);
+		fulltimeTextField.setBounds(layoutMetrics.getLabelPositionX() + (fulltimeLabel.getWidth() / 2) - (layoutMetrics.getTextFieldWidth() / 2), layoutMetrics.getLabelPositionY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		fulltimeTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -114,12 +76,12 @@ public class PricePanel extends JPanel implements Observer, Serializable, Action
 		add(fulltimeLabel);
 		
 		halftimeLabel = new JLabel("Halftime (TL)");
-		halftimeLabel.setBounds(LX, fulltimeLabel.getY() + LVS + LTVS, LW, LH);
+		halftimeLabel.setBounds(layoutMetrics.getLabelPositionX(), fulltimeLabel.getY() + layoutMetrics.getLabelVerticalSpace() + layoutMetrics.getLabelTextFieldVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		halftimeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		halftimeTextField = new RecordTextField(RecordTextField.DECIMAL_NUMBER_TEXT + RecordTextField.REQUIRED_TEXT);
 		halftimeTextField.setHorizontalAlignment(SwingConstants.CENTER);
-		halftimeTextField.setBounds(LX + (halftimeLabel.getWidth() / 2) - (TW / 2), halftimeLabel.getY() - LTVS, TW, TH);
+		halftimeTextField.setBounds(layoutMetrics.getLabelPositionX() + (halftimeLabel.getWidth() / 2) - (layoutMetrics.getTextFieldWidth() / 2), halftimeLabel.getY() - layoutMetrics.getLabelTextFieldVerticalSpace(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		halftimeTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
@@ -132,12 +94,12 @@ public class PricePanel extends JPanel implements Observer, Serializable, Action
 		add(halftimeLabel);
 		
 		overtimeLabel = new JLabel("Overtime (TL)");
-		overtimeLabel.setBounds(LX, halftimeLabel.getY() + LVS + LTVS, LW, LH);
+		overtimeLabel.setBounds(layoutMetrics.getLabelPositionX(), halftimeLabel.getY() + layoutMetrics.getLabelVerticalSpace() + layoutMetrics.getLabelTextFieldVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		overtimeLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		
 		overtimeTextField = new RecordTextField(RecordTextField.DECIMAL_NUMBER_TEXT + RecordTextField.REQUIRED_TEXT);
 		overtimeTextField.setHorizontalAlignment(SwingConstants.CENTER);
-		overtimeTextField.setBounds(LX + (overtimeLabel.getWidth() / 2) - (TW / 2), overtimeLabel.getY() - LTVS, TW, TH);
+		overtimeTextField.setBounds(layoutMetrics.getLabelPositionX() + (overtimeLabel.getWidth() / 2) - (layoutMetrics.getTextFieldWidth() / 2), overtimeLabel.getY() - layoutMetrics.getLabelTextFieldVerticalSpace(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		overtimeTextField.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {

@@ -32,6 +32,7 @@ import com.cbozan.entity.Employer;
 import com.cbozan.entity.Job;
 import com.cbozan.entity.Price;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.LayoutMetrics;
 import com.cbozan.view.component.RecordTextField;
 import com.cbozan.view.component.SearchBox;
 import com.cbozan.view.component.TextArea;
@@ -39,64 +40,10 @@ import com.cbozan.view.helper.Observer;
 
 public class JobPanel extends JPanel implements Observer, Serializable, ActionListener{
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	private final List<Observer> observers;
 
-	/**
-	 * y position of label
-	 */
-	private final int LY = 230;
-	
-	/**
-	 * x position of label
-	 */
-	private final int LX = 330;
-	
-	/**
-	 * width of the Textfield
-	 */
-	private final int TW = 190;
-	
-	/**
-	 * height of the TextField
-	 */
-	private final int TH = 25;
-	
-	/**
-	 * width of the label
-	 */
-	private final int LW = 95;
-	
-	/**
-	 * height of the label
-	 */
-	private final int LH = 25;
-	
-	/**
-	 * vertical space of the label
-	 */
-	private final int LVS = 40;
-	
-	/**
-	 * horizontal space of the label
-	 */
-	private final int LHS = 30;
-	
-	/**
-	 * width of the button
-	 */
-	private final int BW = 80;
-	
-	/**
-	 * height of the button
-	 */
-	private final int BH = 30;
-	
-	
 	private JLabel imageLabel;
 	private JLabel titleLabel, employerLabel, priceLabel, descriptionLabel;
 	private RecordTextField titleTextField;
@@ -106,10 +53,12 @@ public class JobPanel extends JPanel implements Observer, Serializable, ActionLi
 	
 	private Employer selectedEmployer;
 	private SearchBox employerSearchBox;
+	private final LayoutMetrics layoutMetrics;
 	
 	public JobPanel() {
 		
 		super();
+		layoutMetrics = new LayoutMetrics(230, 330, 190, 25, 95, 25, 40, 0, 30, 80, 30);
 		setLayout(null);
 		
 		selectedEmployer = null;
@@ -117,16 +66,16 @@ public class JobPanel extends JPanel implements Observer, Serializable, ActionLi
 		subscribe(this);
 		
 		imageLabel = new JLabel(new ImageIcon("src\\icon\\new_job.png"));
-		imageLabel.setBounds(LX + 157, 50, 128, 128);
+		imageLabel.setBounds(layoutMetrics.getLabelPositionX() + 157, 50, 128, 128);
 		add(imageLabel);
 		
 		
 		titleLabel = new JLabel("Job Title");
-		titleLabel.setBounds(LX, LY, LW, LH);
+		titleLabel.setBounds(layoutMetrics.getLabelPositionX(), layoutMetrics.getLabelPositionY(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		add(titleLabel);
 		
 		titleTextField = new RecordTextField(RecordTextField.REQUIRED_TEXT);
-		titleTextField.setBounds(LX + titleLabel.getWidth() + LHS, titleLabel.getY(), TW, TH);
+		titleTextField.setBounds(layoutMetrics.getLabelPositionX() + titleLabel.getWidth() + layoutMetrics.getLabelHorizontalSpace(), titleLabel.getY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		titleTextField.setHorizontalAlignment(SwingConstants.CENTER);
 		titleTextField.addActionListener(new ActionListener() {
 			@Override
@@ -139,10 +88,10 @@ public class JobPanel extends JPanel implements Observer, Serializable, ActionLi
 		
 		
 		employerLabel = new JLabel("Employer");
-		employerLabel.setBounds(LX, titleLabel.getY() + LVS, LW, LH);
+		employerLabel.setBounds(layoutMetrics.getLabelPositionX(), titleLabel.getY() + layoutMetrics.getLabelVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		add(employerLabel);
 		
-		employerSearchBox = new SearchBox(EmployerDAO.getInstance().list(), new Dimension(TW, TH)) {
+		employerSearchBox = new SearchBox(EmployerDAO.getInstance().list(), new Dimension(layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight())) {
 			private static final long serialVersionUID = 685599997274436984L;
 			@Override
 			public void mouseAction(MouseEvent e, Object searchResultObject, int chooseIndex) {
@@ -153,19 +102,19 @@ public class JobPanel extends JPanel implements Observer, Serializable, ActionLi
 				super.mouseAction(e, searchResultObject, chooseIndex);
 			}
 		};
-		employerSearchBox.setBounds(LX + employerLabel.getWidth() + LHS, employerLabel.getY(), TW, TH);
+		employerSearchBox.setBounds(layoutMetrics.getLabelPositionX() + employerLabel.getWidth() + layoutMetrics.getLabelHorizontalSpace(), employerLabel.getY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		add(employerSearchBox);
 		
-		employerSearchBox.getPanel().setBounds(employerSearchBox.getX(), employerSearchBox.getY() + TH, TW, 0);
+		employerSearchBox.getPanel().setBounds(employerSearchBox.getX(), employerSearchBox.getY() + layoutMetrics.getTextFieldHeight(), layoutMetrics.getTextFieldWidth(), 0);
 		add(employerSearchBox.getPanel());
 		
 		priceLabel = new JLabel("Ücretlendirme");
-		priceLabel.setBounds(LX, employerLabel.getY() + LVS, LW, LH);
+		priceLabel.setBounds(layoutMetrics.getLabelPositionX(), employerLabel.getY() + layoutMetrics.getLabelVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		add(priceLabel);
 		
 		
 		priceComboBox = new JComboBox<Price>(PriceDAO.getInstance().list().toArray(new Price[0]));
-		priceComboBox.setBounds(LX + priceLabel.getWidth() + LHS, priceLabel.getY(), TW, TH);
+		priceComboBox.setBounds(layoutMetrics.getLabelPositionX() + priceLabel.getWidth() + layoutMetrics.getLabelHorizontalSpace(), priceLabel.getY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		priceComboBox.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
@@ -176,16 +125,16 @@ public class JobPanel extends JPanel implements Observer, Serializable, ActionLi
 		add(priceComboBox);
 		
 		descriptionLabel = new JLabel("Description");
-		descriptionLabel.setBounds(LX, priceLabel.getY() + LVS, LW, LH);
+		descriptionLabel.setBounds(layoutMetrics.getLabelPositionX(), priceLabel.getY() + layoutMetrics.getLabelVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		add(descriptionLabel);
 		
 		descriptionTextArea = new TextArea();
-		descriptionTextArea.setBounds(descriptionLabel.getX() + LW + LHS, descriptionLabel.getY(), TW, TH * 3);
+		descriptionTextArea.setBounds(descriptionLabel.getX() + layoutMetrics.getLabelWidth() + layoutMetrics.getLabelHorizontalSpace(), descriptionLabel.getY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight() * 3);
 		add(descriptionTextArea);
 		
 		
 		saveButton = new JButton("SAVE");
-		saveButton.setBounds(descriptionTextArea.getX() + ((TW - BW) / 2), descriptionTextArea.getY() + descriptionTextArea.getHeight() + 20, BW, BH);
+		saveButton.setBounds(descriptionTextArea.getX() + ((layoutMetrics.getTextFieldWidth() - layoutMetrics.getButtonWidth()) / 2), descriptionTextArea.getY() + descriptionTextArea.getHeight() + 20, layoutMetrics.getButtonWidth(), layoutMetrics.getButtonHeight());
 		//save_button.setContentAreaFilled(false);
 		saveButton.setFocusPainted(false);
 		saveButton.addActionListener(this);
@@ -250,7 +199,7 @@ public class JobPanel extends JPanel implements Observer, Serializable, ActionLi
 						new JScrollPane(descriptionTextArea) {
 							private static final long serialVersionUID = 1L;
 							public Dimension getPreferredSize() {
-								return new Dimension(200, TH * 3);
+								return new Dimension(200, layoutMetrics.getTextFieldHeight() * 3);
 							}
 						}
 				};

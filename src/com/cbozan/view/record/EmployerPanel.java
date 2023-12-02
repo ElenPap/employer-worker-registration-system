@@ -23,6 +23,7 @@ import javax.swing.border.LineBorder;
 import com.cbozan.dao.EmployerDAO;
 import com.cbozan.entity.Employer;
 import com.cbozan.exception.EntityException;
+import com.cbozan.util.LayoutMetrics;
 import com.cbozan.view.component.RecordTextField;
 import com.cbozan.view.helper.Control;
 import com.cbozan.view.helper.Observer;
@@ -32,66 +33,17 @@ public class EmployerPanel extends JPanel implements Observer, ActionListener, S
 	private static final long serialVersionUID = -5013773197522265980L;
 	private final List<Observer> observers;
 	
-	/**
-	 * y position of label
-	 */
-	private final int LY = 250;
-	
-	/**
-	 * x position of label
-	 */
-	private final int LX = 330;
-	
-	/**
-	 * width of the Textfield
-	 */
-	private final int TW = 190;
-	
-	/**
-	 * height of the TextField
-	 */
-	private final int TH = 25;
-	
-	/**
-	 * width of the label
-	 */
-	private final int LW = 95;
-	
-	/**
-	 * height of the label
-	 */
-	private final int LH = 25;
-	
-	/**
-	 * vertical space of the label
-	 */
-	private final int LVS = 40;
-	
-	/**
-	 * horizontal space of the label
-	 */
-	private final int LHS = 30;
-	
-	/**
-	 * width of the button
-	 */
-	private final int BW = 80;
-	
-	/**
-	 * height of the button
-	 */
-	private final int BH = 30;
-	
-	
 	private JLabel imageLabel;
 	private JLabel fnameLabel, lnameLabel, phoneNumberLabel, descriptionLabel;
 	private RecordTextField fnameTextField, lnameTextField, phoneNumberTextField;
 	private JScrollPane descriptionScrollPane;
 	private JButton saveButton;
+	private final LayoutMetrics layoutMetrics;
 	
 	public EmployerPanel() {
 		
-		super();	
+		super();
+		layoutMetrics = new LayoutMetrics(250, 330, 190, 25, 95, 25, 40, 0, 30, 80, 30);
 		setLayout(null);
 		
 		observers = new ArrayList<>();
@@ -113,15 +65,15 @@ public class EmployerPanel extends JPanel implements Observer, ActionListener, S
 		imageLabel = new JLabel();
 		imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
 		imageLabel.setIcon(new ImageIcon("src\\icon\\new_employer.png"));
-		imageLabel.setBounds(LX + 155, 40, 128, 130);
+		imageLabel.setBounds(layoutMetrics.getLabelPositionX() + 155, 40, 128, 130);
 		add(imageLabel);
 
 		fnameLabel = new JLabel("Name");
-		fnameLabel.setBounds(LX, LY, LW, LH);
+		fnameLabel.setBounds(layoutMetrics.getLabelPositionX(), layoutMetrics.getLabelPositionY(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		add(fnameLabel);
 		
 		fnameTextField = new RecordTextField(RecordTextField.REQUIRED_TEXT);
-		fnameTextField.setBounds(fnameLabel.getX() + LW + LHS, fnameLabel.getY(), TW, TH);
+		fnameTextField.setBounds(fnameLabel.getX() + layoutMetrics.getLabelWidth() + layoutMetrics.getLabelHorizontalSpace(), fnameLabel.getY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		fnameTextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!fnameTextField.getText().replaceAll("\\s+", "").equals("")) {
@@ -133,11 +85,11 @@ public class EmployerPanel extends JPanel implements Observer, ActionListener, S
 		
 		
 		lnameLabel = new JLabel("Surname");
-		lnameLabel.setBounds(fnameLabel.getX(), fnameLabel.getY() + LVS, LW, LH);
+		lnameLabel.setBounds(fnameLabel.getX(), fnameLabel.getY() + layoutMetrics.getLabelVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		add(lnameLabel);
 		
 		lnameTextField = new RecordTextField(RecordTextField.REQUIRED_TEXT);
-		lnameTextField.setBounds(lnameLabel.getX() + LW + LHS, lnameLabel.getY(), TW, TH);
+		lnameTextField.setBounds(lnameLabel.getX() + layoutMetrics.getLabelWidth() + layoutMetrics.getLabelHorizontalSpace(), lnameLabel.getY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		lnameTextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(!lnameTextField.getText().replaceAll("\\s+", "").equals("")) {
@@ -149,11 +101,11 @@ public class EmployerPanel extends JPanel implements Observer, ActionListener, S
 		
 		
 		phoneNumberLabel = new JLabel("Phone Nu.");
-		phoneNumberLabel.setBounds(lnameLabel.getX(), lnameLabel.getY() + LVS, LW, LH);
+		phoneNumberLabel.setBounds(lnameLabel.getX(), lnameLabel.getY() + layoutMetrics.getLabelVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		add(phoneNumberLabel);
 		
 		phoneNumberTextField= new RecordTextField(RecordTextField.PHONE_NUMBER_TEXT + RecordTextField.REQUIRED_TEXT);
-		phoneNumberTextField.setBounds(phoneNumberLabel.getX() + LW + LHS, phoneNumberLabel.getY(), TW, TH);
+		phoneNumberTextField.setBounds(phoneNumberLabel.getX() + layoutMetrics.getLabelWidth() + layoutMetrics.getLabelHorizontalSpace(), phoneNumberLabel.getY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight());
 		phoneNumberTextField.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				if(Control.phoneNumberControl(phoneNumberTextField.getText())) {
@@ -165,15 +117,15 @@ public class EmployerPanel extends JPanel implements Observer, ActionListener, S
 		
 		
 		descriptionLabel= new JLabel("Description");
-		descriptionLabel.setBounds(phoneNumberLabel.getX(), phoneNumberLabel.getY() + LVS, LW, LH);
+		descriptionLabel.setBounds(phoneNumberLabel.getX(), phoneNumberLabel.getY() + layoutMetrics.getLabelVerticalSpace(), layoutMetrics.getLabelWidth(), layoutMetrics.getLabelHeight());
 		add(descriptionLabel);
 		
 		descriptionScrollPane = new JScrollPane(new JTextArea());
-		descriptionScrollPane.setBounds(descriptionLabel.getX() + LW + LHS, descriptionLabel.getY(), TW, TH * 3);
+		descriptionScrollPane.setBounds(descriptionLabel.getX() + layoutMetrics.getLabelWidth() + layoutMetrics.getLabelHorizontalSpace(), descriptionLabel.getY(), layoutMetrics.getTextFieldWidth(), layoutMetrics.getTextFieldHeight() * 3);
 		add(descriptionScrollPane);
 		
 		saveButton = new JButton("SAVE");
-		saveButton.setBounds(descriptionScrollPane.getX() + ((TW - BW) / 2), descriptionScrollPane.getY() + descriptionScrollPane.getHeight() + 20, BW, BH);
+		saveButton.setBounds(descriptionScrollPane.getX() + ((layoutMetrics.getTextFieldWidth() - layoutMetrics.getButtonWidth()) / 2), descriptionScrollPane.getY() + descriptionScrollPane.getHeight() + 20, layoutMetrics.getButtonWidth(), layoutMetrics.getButtonHeight());
 		saveButton.setFocusPainted(false);
 		saveButton.addActionListener(this);
 		add(saveButton);
@@ -221,7 +173,7 @@ public class EmployerPanel extends JPanel implements Observer, ActionListener, S
 					new JScrollPane(descriptionTextArea) {
 						private static final long serialVersionUID = 1L;
 						public Dimension getPreferredSize() {
-							return new Dimension(200, TH * 3);
+							return new Dimension(200, layoutMetrics.getTextFieldHeight() * 3);
 						}
 					}
 			};
