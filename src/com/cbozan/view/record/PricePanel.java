@@ -123,80 +123,70 @@ public class PricePanel extends JPanel implements Observer, Serializable, Action
 		
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		
 		if(e.getSource() == saveButton) {
-			
-			String fulltime, halftime, overtime;
-			
-			fulltime = fulltimeTextField.getText().replaceAll("\\s+", "");
-			halftime = halftimeTextField.getText().replaceAll("\\s+", "");
-			overtime = overtimeTextField.getText().replaceAll("\\s+", "");
-			
-			if(!Control.decimalControl(fulltime, halftime, overtime)) {
-				
+
+			String fulltime = fulltimeTextField.getText().replaceAll("\\s+", "");
+			String halftime = halftimeTextField.getText().replaceAll("\\s+", "");
+			String overtime = overtimeTextField.getText().replaceAll("\\s+", "");
+
+			if (!Control.decimalControl(fulltime, halftime, overtime)) {
 				String message = "Please fill in the required fields or enter correctly format (max 2 floatpoint)";
 				JOptionPane.showMessageDialog(this, message, "ERROR", JOptionPane.ERROR_MESSAGE);
-				
 			} else {
-				
-				JTextArea fulltimeTextArea, halftimeTextArea, overtimeTextArea;
-				
-				fulltimeTextArea = new JTextArea(fulltime + " ₺");
-				fulltimeTextArea.setEditable(false);
-				
-				halftimeTextArea = new JTextArea(halftime + " ₺");
-				halftimeTextArea.setEditable(false);
-				
-				overtimeTextArea = new JTextArea(overtime + " ₺");
-				overtimeTextArea.setEditable(false);
-				
-				Object[] pane = {
-						new JLabel("Fulltime Price"),
-						fulltimeTextArea,
-						new JLabel("Halftime Price"),
-						halftimeTextArea,
-						new JLabel("Overtime Price"),
-						overtimeTextArea
-				};
-				
-				
-		
-				int result = JOptionPane.showOptionDialog(this, pane, "Confirmation", 1, 1, 
-						new ImageIcon("src\\icon\\accounting_icon_1_32.png"), new Object[] {"SAVE", "CANCEL"}, "CANCEL");
-				
-				
-				// System.out.println(result);
-				// 0 -> SAVE
-				// 1 -> CANCEL
-				
-				if(result == 0) {
-					
-					Price.PriceBuilder builder = new Price.PriceBuilder();
-					builder.setId(Integer.MAX_VALUE);
-					builder.setFulltime(new BigDecimal(fulltime));
-					builder.setHalftime(new BigDecimal(halftime));
-					builder.setOvertime(new BigDecimal(overtime));
-					
-					Price price = null;
-					try {
-						price = builder.build();
-					} catch (EntityException e1) {
-						System.out.println(e1.getMessage());
-					}
-					
-					if(PriceDAO.getInstance().create(price)) { 
-						JOptionPane.showMessageDialog(this, "Registration Successful");
-						notifyAllObservers();
-					} else {
-						JOptionPane.showMessageDialog(this, "Not saved", "DataBase error", JOptionPane.ERROR_MESSAGE);
-					}
-				}
-				
+				onSaveAction(fulltime, halftime, overtime);
 			}
-			
-			
 		}
-		
+	}
+
+	private void onSaveAction(String fulltime, String halftime, String overtime) {
+		JTextArea fulltimeTextArea = new JTextArea(fulltime + " ₺");
+		fulltimeTextArea.setEditable(false);
+
+		JTextArea halftimeTextArea = new JTextArea(halftime + " ₺");
+		halftimeTextArea.setEditable(false);
+
+		JTextArea overtimeTextArea = new JTextArea(overtime + " ₺");
+		overtimeTextArea.setEditable(false);
+
+		Object[] pane = {
+				new JLabel("Fulltime Price"),
+				fulltimeTextArea,
+				new JLabel("Halftime Price"),
+				halftimeTextArea,
+				new JLabel("Overtime Price"),
+				overtimeTextArea
+		};
+
+		int result = JOptionPane.showOptionDialog(this, pane, "Confirmation", 1, 1,
+				new ImageIcon("src\\icon\\accounting_icon_1_32.png"), new Object[] {"SAVE", "CANCEL"}, "CANCEL");
+
+		if(result == 0) {
+			onConfirmationSaveAction(fulltime, halftime, overtime);
+		}
+	}
+
+	private void onConfirmationSaveAction(String fulltime, String halftime, String overtime) {
+
+		Price.PriceBuilder builder = new Price.PriceBuilder();
+		builder.setId(Integer.MAX_VALUE);
+		builder.setFulltime(new BigDecimal(fulltime));
+		builder.setHalftime(new BigDecimal(halftime));
+		builder.setOvertime(new BigDecimal(overtime));
+
+		Price price = null;
+		try {
+			price = builder.build();
+		} catch (EntityException e1) {
+			System.out.println(e1.getMessage());
+		}
+
+		if (PriceDAO.getInstance().create(price)) {
+			JOptionPane.showMessageDialog(this, "Registration Successful");
+			notifyAllObservers();
+		} else {
+			JOptionPane.showMessageDialog(this, "Not saved", "DataBase error", JOptionPane.ERROR_MESSAGE);
+		}
+
 	}
 	
 	private void clearPanel() {
