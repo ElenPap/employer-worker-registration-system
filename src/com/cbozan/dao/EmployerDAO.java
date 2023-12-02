@@ -8,7 +8,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.List;
@@ -27,141 +26,96 @@ public class EmployerDAO {
 
 	public Employer findById(int id) {
 		
-		if(usingCache == false)
+		if(!usingCache)
 			list();
 		
 		if(cache.containsKey(id))
 			return cache.get(id);
 		return null;
 	}
-	
-	
-	public List<Employer> list(){
-		
-		List<Employer> list = new ArrayList<>();
-		
-		if(cache.size() != 0 && usingCache) {
-			for(Entry<Integer, Employer> employer : cache.entrySet()) {
-				list.add(employer.getValue());
-			}
-			
-			return list;
+
+	/**
+	 * Fetches all employs from db and updates the cache
+	 * @return A list of all the employs
+	 */
+	public List<Employer> list() {
+		if (usingCache && !cache.isEmpty()) {
+			return new ArrayList<>(cache.values());
 		}
-		
-		cache.clear();
-		
-		Connection conn;
-		Statement st;
-		ResultSet rs;
-		String query = "SELECT * FROM employer;";
-		
-		try {
-			conn = DB.getConnection();
-			st = conn.createStatement();
-			rs = st.executeQuery(query);
-			
-			EmployerBuilder builder;
-			Employer employer;
-			
-			while(rs.next()) {
-				
-				builder = new EmployerBuilder();
-				builder.setId(rs.getInt("id"));
-				builder.setFname(rs.getString("fname"));
-				builder.setLname(rs.getString("lname"));
-				
-				if(rs.getArray("tel") == null)
-					builder.setTel(null);
-				else
-					builder.setTel(Arrays.asList((String [])rs.getArray("tel").getArray()));
-				
-				builder.setDescription(rs.getString("description"));
-				builder.setDate(rs.getTimestamp("date"));
-				
-				try {
-					
-					employer = builder.build();
-					list.add(employer);
-					cache.put(employer.getId(), employer);
-					
-				} catch (EntityException e) {
-					ExceptionUtil.showEntityException(e, rs.getString("fname") + " " + rs.getString("lname"));
-				}
-				
-			}
-			
-			
+
+		List<Employer> list = new ArrayList<>();
+
+		try (Connection conn = DB.getConnection();
+			 Statement st = conn.createStatement();
+			 ResultSet rs = st.executeQuery("SELECT * FROM employer;")) {
+
+			addEmployersResultToListAndCache(rs, list);
+
 		} catch (SQLException e) {
 			ExceptionUtil.showSQLException(e);
 		}
-		
+
 		return list;
 	}
-	
-	
+
+	private void addEmployersResultToListAndCache(ResultSet resultSet, List<Employer> employers) throws SQLException {
+		while (resultSet.next()) {
+			try {
+				Employer employer = new EmployerBuilder().buildEmployerFromResultSet(resultSet);
+				employers.add(employer);
+				cache.put(employer.getId(), employer);
+			} catch (EntityException e) {
+				ExceptionUtil.showEntityException(e, resultSet.getString("fname") + " " + resultSet.getString("lname"));
+			}
+		}
+	}
+
 	public boolean create(Employer employer) {
-		
+
 		if(createControl(employer) == false)
 			return false;
-		
+
 		Connection conn;
 		PreparedStatement pst;
 		int result = 0;
 		String query = "INSERT INTO employer (fname,lname,tel,description) VALUES (?,?,?,?);";
 		String query2 = "SELECT * FROM employer ORDER BY id DESC LIMIT 1;";
-		
+
 		try {
 			conn = DB.getConnection();
 			pst = conn.prepareStatement(query);
 			pst.setString(1, employer.getFname());
 			pst.setString(2, employer.getLname());
-			
+
 			if(employer.getTel() == null)
 				pst.setArray(3, null);
 			else {
 				java.sql.Array phones = conn.createArrayOf("VARCHAR", employer.getTel().toArray());
 				pst.setArray(3, phones);
 			}
-			
+
 			pst.setString(4, employer.getDescription());
 			result = pst.executeUpdate();
-			
+
 			// adding cache
 			if(result != 0) {
-				
+
 				ResultSet rs = conn.createStatement().executeQuery(query2);
-				while(rs.next()) {
-					
-					EmployerBuilder builder = new EmployerBuilder();
-					builder.setId(rs.getInt("id"));
-					builder.setFname(rs.getString("fname"));
-					builder.setLname(rs.getString("lname"));
-					
-					if(rs.getArray("tel") == null)
-						builder.setTel(null);
-					else
-						builder.setTel(Arrays.asList((String [])rs.getArray("tel").getArray()));
-					
-					builder.setDescription(rs.getString("description"));
-					builder.setDate(rs.getTimestamp("date"));
-					
+
+				while (rs.next()) {
 					try {
-						
-						Employer emp = builder.build();
-						cache.put(emp.getId(), emp);
-						
+						Employer createdEmployer = new EmployerBuilder().buildEmployerFromResultSet(rs);
+						cache.put(createdEmployer.getId(), createdEmployer);
 					} catch (EntityException e) {
 						ExceptionUtil.showEntityException(e, rs.getString("fname") + " " + rs.getString("lname"));
 					}
-					
 				}
-				
 			}
-			
+
 		} catch (SQLException e) {
 			ExceptionUtil.showSQLException(e);
 		}
-		
+
 		return result == 0 ? false : true;
 	}
 	

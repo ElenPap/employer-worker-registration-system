@@ -1,7 +1,10 @@
 package com.cbozan.entity;
 
 import java.io.Serializable;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.List;
 
 import com.cbozan.exception.EntityException;
@@ -59,6 +62,15 @@ public final class Employer implements Serializable, Cloneable{
 			this.tel = tel;
 			this.description = description;
 			this.date = date;
+		}
+
+		public Employer buildEmployerFromResultSet(ResultSet rs) throws SQLException, EntityException {
+			return this.setId(rs.getInt("id"))
+					.setFname(rs.getString("fname"))
+					.setLname(rs.getString("lname"))
+					.setTel(rs.getArray("tel") == null ? null : Arrays.asList((String[]) rs.getArray("tel").getArray()))
+					.setDescription(rs.getString("description"))
+					.setDate(rs.getTimestamp("date")).build();
 		}
 
 		public EmployerBuilder setId(int id) {
